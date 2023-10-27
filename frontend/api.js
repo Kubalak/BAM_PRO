@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.0.145:8080'; // Ustal na swoj adres
 
 export const registerUser = async (formDataRegister) => {
   try {
-    const response = await axios.post("http://192.168.0.145:8080/main/register/",formDataRegister);
+    const addr = `${process.env.EXPO_PUBLIC_API_URL}/main/register/`
+    console.info(addr)
+    const response = await axios.post(addr,formDataRegister);
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.error);
@@ -22,3 +23,9 @@ export const registerUser = async (formDataRegister) => {
 //     throw new Error(error.response.data.error);
 //   }
 // };
+
+const api = axios.create({
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  withCredentials: true
+})
+export default api;
