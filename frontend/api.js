@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.0.145:8080'; // Replace with your Django server URL
+const BASE_URL = 'http://192.168.0.145:8080'; // Ustal na swoj adres
 
 export const registerUser = async (formDataRegister) => {
   try {
