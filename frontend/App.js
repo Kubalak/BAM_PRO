@@ -1,5 +1,7 @@
-
 import 'react-native-gesture-handler';
+import { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native'
+import api from './api';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Register from './screens/Register';
@@ -14,8 +16,29 @@ const Stack = createStackNavigator();
       <Stack.Screen name="Settings" component={Settings} /> */
 
 function MyStack() {
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    api.get('/main/status')
+      .then(response => {
+        return response.data
+      })
+      .then(data => {
+        console.log(data)
+        if(data.authenticated === true)
+          navigation.reset({
+            routes: [{ name: 'PassManager' }]
+        });
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }, [])
+
   return (
-    <Stack.Navigator initialRouteName='Home'>
+    <Stack.Navigator initialRouteName='Home' screenOptions={{
+      headerShown: false,
+    }}>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Login" component={Login} />

@@ -1,7 +1,8 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
-from .forms import UserForm
-from .models import UserProfile
+from django.views.decorators.http import require_http_methods, require_GET
+from .models import UserProfile, CreditStorage
+from .serializers import CreditSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -82,3 +83,41 @@ def authenticate_view(request):
         except Exception as e:
             return JsonResponse({'error':str(e), 'status':500}, )
     return JsonResponse({'error': 'Invalid request method', 'status':405})
+
+
+@require_GET
+def status(request):
+    return JsonResponse({"authenticated": request.user.is_authenticated})
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def add_service(request:HttpRequest):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Please log in first"}, status=401)
+    try:
+        name = request.POST.get("name")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        icon = request.POST.get("icon")
+        print(icon)
+        user = User.objects.filter(username=request.user.username).first()
+        CreditStorage(
+            user=user,
+            name=name,
+            username=username,
+            password=password,
+            icon=icon
+        ).save()
+        return JsonResponse({"message": "Credentials saved successfully!"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": "Something went wrong when processing request"}, status=500)
+
+@require_GET
+def list_services(request:HttpRequest):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Please log in first"}, status=401)
+    data = CreditStorage.objects.all().filter(user=request.user.pk)
+    return JsonResponse({"services": CreditSerializer(data, many=True).data})
+        
+        

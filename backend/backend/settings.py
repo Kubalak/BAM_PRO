@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'mainApp',
     'django_otp',
     'corsheaders',
+    'django_cryptography',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
