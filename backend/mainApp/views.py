@@ -1,9 +1,11 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import UserForm
+from .models import UserProfile
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from base64 import b32encode
 
 def index(request):
     return HttpResponse("Hello there from index!")
@@ -27,13 +29,21 @@ def register_view(request):
 
             # Create the user
             user = User.objects.create_user(username=username, email=email, password=password1)
-            return JsonResponse({'message': 'User registered successfully.', 'status': 200})
+            totp_device = TOTPDevice.objects.create(user=user, confirmed=False)
+            totp_device.save()
+            device = TOTPDevice.objects.get(user=user)
+            secret_key = b32encode(device.bin_key).decode('utf-8')
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.totp_device = totp_device
+            profile.save()
+            print(secret_key)
+            return JsonResponse({'message': 'User registered successfully.', 'secret':secret_key, 'status':200})
         
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': str(e),  'status':500})
 
     else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+        return JsonResponse({'error': 'Invalid request method', 'status':405})
     
 @csrf_exempt
 def login_view(request):
@@ -45,11 +55,30 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
-                login(request,user)
-                return JsonResponse({'message':'User logged in sucessfully'})
+                return JsonResponse({'message':'All good in sucessfully', 'status':200})
             else:
-                return JsonResponse({'error':'Invalid username or password'}, status=400)
+                return JsonResponse({'error':'Invalid username or password', 'status':400})
         except Exception as e:
-            return JsonResponse({'error':str(e)}, status=500)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-                
+            return JsonResponse({'error':str(e),  'status':500})
+    return JsonResponse({'error': 'Invalid request method', 'status':405})
+
+@csrf_exempt
+def authenticate_view(request):
+    if request.method == 'POST':
+        try:
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            totp_code = request.POST.get('password2FA')
+            print(totp_code)
+            user = authenticate(request, username=username, password=password)
+            print("User", user)
+            totp_device = TOTPDevice.objects.get(user=user)
+            print("Totp_device", totp_device)
+            if totp_device.verify_token(totp_code):
+                login(request, user)
+                return JsonResponse({'message': 'User logged in successfully', 'status' : 200}) 
+            else:
+                return JsonResponse({'error': 'Invalid 2FA code', 'status':400})
+        except Exception as e:
+            return JsonResponse({'error':str(e), 'status':500}, )
+    return JsonResponse({'error': 'Invalid request method', 'status':405})
