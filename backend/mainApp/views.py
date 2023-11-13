@@ -4,7 +4,7 @@ from django.views.decorators.http import require_http_methods, require_GET
 from .models import UserProfile, CreditStorage
 from .serializers import CreditSerializer
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from base64 import b32encode
 
@@ -119,5 +119,11 @@ def list_services(request:HttpRequest):
         return JsonResponse({"error": "Please log in first"}, status=401)
     data = CreditStorage.objects.all().filter(user=request.user.pk)
     return JsonResponse({"services": CreditSerializer(data, many=True).data})
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def user_logout(request):
+    logout(request)
+    return JsonResponse({"message": "Logout successfull"})
         
         

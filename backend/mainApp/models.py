@@ -13,6 +13,6 @@ class CreditStorage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=32)
     icon = models.JSONField(null=False)
-    username = models.CharField(max_length=128)
+    username = encrypt(models.CharField(max_length=128))
     password = encrypt(models.CharField(max_length=150))
     
