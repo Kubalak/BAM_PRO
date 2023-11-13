@@ -57,10 +57,12 @@ export default function Login({ navigation }) {
     }
     return (
         <View style={styles.container}>
+            <View style={styles.form}>
             <TextInput
                 placeholder="username"
                 value={username}
                 onChangeText={(text) => setUserName(text)}
+                style={styles.input}
             />
 
             <TextInput
@@ -68,18 +70,56 @@ export default function Login({ navigation }) {
                 placeholder="password"
                 value={password}
                 onChangeText={(text) => setPassword(text)}
+                style={styles.input}
             />
 
-            <Button title="Login" onPress={handleLogin} />
+            <Button 
+            title="Login" 
+            onPress={handleLogin}
+            style={styles.submit} />
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    container:{
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center'
+
     },
-});
+    header: {
+        fontSize: 20,
+        fontWeight: '500',
+        marginTop: 5,
+        marginBottom: 5
+    },
+    form:{
+        alignItems: 'center',
+        width: '100%',
+    },
+    input:{
+        backgroundColor: '#BCDEFA',
+        shadowColor: 'black',
+        paddingLeft: 4,
+        shadowOffset: {width: -2, height: 4},
+        shadowRadius: 5,
+        borderRadius: 4,
+        elevation: 5,
+        width: '75%',
+        minHeight: 40,
+        marginBottom: 15,
+        textAlign:'center'
+    },
+    submit:{
+        width: '75%',
+        minHeight: 40,
+        backgroundColor: '#519FE0',
+        borderRadius: 5,
+        justifyContent: 'center'
+    },
+    submitText: {
+        textAlign: 'center',
+    },
+})

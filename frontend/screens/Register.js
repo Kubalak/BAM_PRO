@@ -1,6 +1,6 @@
-import { useState} from 'react';
+import { useState } from 'react';
 import { registerUser } from '../api';
-import { Modal, Text, TouchableOpacity, TextInput, Button, Alert, StyleSheet, View} from 'react-native';
+import { Modal, Text, TouchableOpacity, TextInput, Button, Alert, StyleSheet, View } from 'react-native';
 import * as Clipboard from "expo-clipboard"
 
 export default function Register({ navigation }) {
@@ -46,29 +46,35 @@ export default function Register({ navigation }) {
         placeholder="username"
         value={username}
         onChangeText={(text) => setUserName(text)}
+        style={styles.input}
       />
 
       <TextInput
         placeholder="email"
         value={email}
         onChangeText={(text) => setEmail(text)}
+        style={styles.input}
       />
 
       <TextInput
         secureTextEntry={true}
-        placeholder="password1"
+        placeholder="password"
         value={password1}
         onChangeText={(text) => setPassword1(text)}
+        style={styles.input}
       />
 
       <TextInput
         secureTextEntry={true}
-        placeholder="password2"
+        placeholder="repeat password"
         value={password2}
         onChangeText={(text) => setPassword2(text)}
+        style={styles.input}
       />
 
-      <Button title="Register" onPress={handleRegister} />
+      <Button title="Register" 
+      onPress={handleRegister} 
+      style={styles.submit}/>
 
       <Modal
         animationType="slide"
@@ -107,6 +113,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  form: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  input: {
+    backgroundColor: '#BCDEFA',
+    shadowColor: 'black',
+    paddingLeft: 4,
+    shadowOffset: { width: -2, height: 4 },
+    shadowRadius: 5,
+    borderRadius: 4,
+    elevation: 5,
+    width: '75%',
+    minHeight: 40,
+    marginBottom: 15,
+    textAlign:'center'
+  },
+  submit: {
+    width: '75%',
+    minHeight: 40,
+    backgroundColor: '#519FE0',
+    borderRadius: 5,
+    justifyContent: 'center'
   },
   centeredView: {
     flex: 1,

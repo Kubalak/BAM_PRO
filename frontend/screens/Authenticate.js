@@ -35,9 +35,10 @@ export default function Authenticate({route, navigation}) {
         <View style={styles.container}>
             <TextInput
                 secureTextEntry={true}
-                placeholder="password2FA"
+                placeholder="TOTP CODE"
                 value={password2FA}
                 onChangeText={(text) => setPassword2FA(text)}
+                style={styles.input}
             />
 
             <Button title="Validate" onPress={handle2FA} />
@@ -46,10 +47,43 @@ export default function Authenticate({route, navigation}) {
 };
 
 const styles = StyleSheet.create({
-    container: {
+    container:{
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center'
+
+    },
+    header: {
+        fontSize: 20,
+        fontWeight: '500',
+        marginTop: 5,
+        marginBottom: 5
+    },
+    form:{
+        alignItems: 'center',
+        width: '100%',
+    },
+    input:{
+        backgroundColor: '#BCDEFA',
+        shadowColor: 'black',
+        paddingLeft: 4,
+        shadowOffset: {width: -2, height: 4},
+        shadowRadius: 5,
+        borderRadius: 4,
+        elevation: 5,
+        width: '75%',
+        minHeight: 40,
+        marginBottom: 15,
+        textAlign:'center'
+    },
+    submit:{
+        width: '75%',
+        minHeight: 40,
+        backgroundColor: '#519FE0',
+        borderRadius: 5,
+        justifyContent: 'center'
+    },
+    submitText: {
+        textAlign: 'center',
     },
 });

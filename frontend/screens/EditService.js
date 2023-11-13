@@ -6,20 +6,20 @@ import { Picker } from '@react-native-picker/picker';
 import DisplayIcon from "../components/DisplayIcon";
 
 
-export default function AddService({navigation}){
+export default function EditService({navigation}){
     const[username, setUsername] = useState('')
     const[password, setPassword] = useState('')
     const[name, setName] = useState('')
     const[icon, setIcon] = useState()
 
-    const saveService = () => {
+    const editService = () => {
         const form = new FormData();
         form.append('name', name)
         form.append('username', username)
         form.append('password', password)
         form.append('icon', icon)
 
-        api.post('/main/service/add/', form, {
+        api.post('/main/service/edit/', form, {
             headers:{
                 'Content-Type': 'multipart/form-data',
             }
@@ -76,7 +76,7 @@ export default function AddService({navigation}){
                     </View>
                 </View>
 
-                <Pressable style={style.submit} onPress={() => saveService()}><Text style={style.submitText}>Save</Text></Pressable>
+                <Pressable style={style.submit} onPress={() => editService()}><Text style={style.submitText}>Save</Text></Pressable>
             </View>
         </View>
     )
