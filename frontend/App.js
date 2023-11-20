@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import api from './api';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Register from './screens/Register';
 import Login from './screens/Login';
 import Home from './screens/Home';
@@ -20,16 +21,25 @@ function MyStack() {
   const navigation = useNavigation();
 
   useEffect(() => {
+    AsyncStorage.getItem('local')
+      .then(response => {
+        if (response !== null && JSON.parse(response) === true)
+          navigation.reset({
+            routes: [{ name: 'PassManager' }]
+          });
+      })
+      .catch(error => { })
+
     api.get('/main/status')
       .then(response => {
         return response.data
       })
       .then(data => {
         console.log(data)
-        if(data.authenticated === true)
+        if (data.authenticated === true)
           navigation.reset({
             routes: [{ name: 'PassManager' }]
-        });
+          });
       })
       .catch(error => {
         console.error(error)
@@ -43,9 +53,9 @@ function MyStack() {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="PassManager" component={PassManager}/>
-      <Stack.Screen name="Authenticate" component={Authenticate}/>
-      <Stack.Screen name="EditService" component={EditService}/>
+      <Stack.Screen name="PassManager" component={PassManager} />
+      <Stack.Screen name="Authenticate" component={Authenticate} />
+      <Stack.Screen name="EditService" component={EditService} />
     </Stack.Navigator>
   );
 }
@@ -53,7 +63,7 @@ function MyStack() {
 export default function App() {
   return (
     <NavigationContainer>
-      <MyStack/>
+      <MyStack />
     </NavigationContainer>
   );
 }

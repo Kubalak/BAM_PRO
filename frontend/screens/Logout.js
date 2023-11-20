@@ -1,26 +1,31 @@
 import { useEffect } from "react";
 import { StyleSheet, View, Text, StatusBar } from "react-native";
 import api from "../api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Logout({navigation}){
+export default function Logout({ navigation }) {
 
     useEffect(() => {
-        api.post('/main/logout/')
-        .then(response => {
-            return response.data
-        })
-        .then(data => {
-            console.info(data.message)
-            navigation.reset({
-                routes: [{ name: 'Home' }]
-            });
-        })
-        .catch(error => {
-            console.warn(error)
-        })
-    }, )
+        AsyncStorage.removeItem('local')
+            .then(() => { })
+            .catch(() => { })
 
-    return(
+        api.post('/main/logout/')
+            .then(response => {
+                return response.data
+            })
+            .then(data => {
+                console.info(data.message)
+                navigation.reset({
+                    routes: [{ name: 'Home' }]
+                });
+            })
+            .catch(error => {
+                console.warn(error)
+            })
+    },)
+
+    return (
         <View style={style.container}>
             <Text>
                 Logging out...
@@ -30,12 +35,12 @@ export default function Logout({navigation}){
 }
 
 const style = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         marginTop: StatusBar.currentHeight
     },
-    button:{
+    button: {
         marginBottom: 5,
     }
-        
+
 })

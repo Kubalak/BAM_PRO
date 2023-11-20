@@ -1,38 +1,76 @@
 import React from "react";
 import api from "../api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
 import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import DisplayIcon from "../components/DisplayIcon";
 
 
-export default function AddService({navigation}){
-    const[username, setUsername] = useState('')
-    const[password, setPassword] = useState('')
-    const[name, setName] = useState('')
-    const[icon, setIcon] = useState()
+export default function AddService({ navigation }) {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [name, setName] = useState('')
+    const [icon, setIcon] = useState('{"type": "fa", "name": "globe"}')
+    const [local, setLocal] = useState(false);
+
+    useEffect(() => {
+        AsyncStorage.getItem('local')
+            .then(value => {
+                setLocal(JSON.parse(value))
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }, [])
 
     const saveService = () => {
-        const form = new FormData();
-        form.append('name', name)
-        form.append('username', username)
-        form.append('password', password)
-        form.append('icon', icon)
+        if (!local) {
+            const form = new FormData();
+            form.append('name', name)
+            form.append('username', username)
+            form.append('password', password)
+            form.append('icon', icon)
 
-        api.post('/main/service/add/', form, {
-            headers:{
-                'Content-Type': 'multipart/form-data',
-            }
-        })
-        .then( response => {
-            return response.data
-        })
-        .then(data => {
-            Alert.alert(data.message)
-        })
-        .catch(error => {
-            console.warn(error);
-        })
+            api.post('/main/service/add/', form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            })
+                .then(response => {
+                    return response.data
+                })
+                .then(data => {
+                    Alert.alert(data.message)
+                })
+                .catch(error => {
+                    console.warn(error);
+                })
+        } else {
+            SecureStore.getItemAsync('credits')
+                .then(value => {
+                    let values = (value === null) ? [] : JSON.parse(value);
+                    const ids = values.map(item => {
+                        return item.pk;
+                    })
+                    const max = Math.max(...ids);
+                    const next_value = values.length > 0 ? (max + 1) : 1;
+                    values = [...values, { name: name, username: username, password: password, icon: icon, pk: next_value }]
+                    SecureStore.setItemAsync('credits', JSON.stringify(values))
+                        .then(response => {
+                            Alert.alert('Credentials added successfully')
+                        })
+                        .catch(error => {
+                            console.error(error)
+                            Alert.alert('Adding credentials failed!')
+                        })
+                })
+                .catch(error => {
+                    console.error(error)
+                    Alert.alert("Failed to get credits")
+                })
+        }
     }
 
     return (
@@ -58,21 +96,20 @@ export default function AddService({navigation}){
                     style={style.input}
                 />
                 <View style={style.iconPicker}>
-                
+
                     <Picker
                         style={style.input}
                         selectedValue={icon}
                         onValueChange={(value) => setIcon(value)}
-                        
                         placeholder="Select icon"
                     >
-                        <Picker.Item label="Default" value='{"type": "fa", "name": "globe"}'/>
-                        <Picker.Item label="Facebook" value='{"type": "ad", "name":"facebook-square"}'/>
-                        <Picker.Item label="X" value='{"type": "ad", "name":"twitter"}'/>
-                        <Picker.Item label="LinkedIn" value='{"type": "fa", "name":"linkedin"}'/>
+                        <Picker.Item label="Default" value='{"type": "fa", "name": "globe"}' />
+                        <Picker.Item label="Facebook" value='{"type": "ad", "name":"facebook-square"}' />
+                        <Picker.Item label="X" value='{"type": "ad", "name":"twitter"}' />
+                        <Picker.Item label="LinkedIn" value='{"type": "fa", "name":"linkedin"}' />
                     </Picker>
                     <View style={style.icon}>
-                        <DisplayIcon iconString={icon} color="blue"/>
+                        <DisplayIcon iconString={icon} color="blue" />
                     </View>
                 </View>
 
@@ -83,7 +120,7 @@ export default function AddService({navigation}){
 }
 
 const style = StyleSheet.create({
-    container:{
+    container: {
         flex: 1,
         alignItems: 'center'
     },
@@ -93,15 +130,15 @@ const style = StyleSheet.create({
         marginTop: 5,
         marginBottom: 5
     },
-    form:{
+    form: {
         alignItems: 'center',
         width: '100%',
     },
-    input:{
+    input: {
         backgroundColor: '#BCDEFA',
         shadowColor: 'black',
         paddingLeft: 4,
-        shadowOffset: {width: -2, height: 4},
+        shadowOffset: { width: -2, height: 4 },
         shadowRadius: 5,
         borderRadius: 4,
         elevation: 5,
@@ -109,7 +146,7 @@ const style = StyleSheet.create({
         minHeight: 40,
         marginBottom: 15
     },
-    submit:{
+    submit: {
         width: '75%',
         minHeight: 40,
         backgroundColor: '#519FE0',
@@ -119,7 +156,7 @@ const style = StyleSheet.create({
     submitText: {
         textAlign: 'center',
     },
-    iconPicker:{
+    iconPicker: {
         width: '75%',
         flexDirection: 'row',
         alignItems: 'center'
@@ -135,7 +172,7 @@ const style = StyleSheet.create({
         alignItems: 'center',
         shadowColor: 'black',
         shadowRadius: 5,
-        shadowOffset: {width: -2, height: 4},
+        shadowOffset: { width: -2, height: 4 },
         elevation: 5
     }
 })

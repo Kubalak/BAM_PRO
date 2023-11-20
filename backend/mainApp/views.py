@@ -100,7 +100,6 @@ def add_service(request:HttpRequest):
         username = request.POST.get("username")
         password = request.POST.get("password")
         icon = request.POST.get("icon")
-        print(icon)
         user = User.objects.filter(username=request.user.username).first()
         CreditStorage(
             user=user,
