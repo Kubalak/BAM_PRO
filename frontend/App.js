@@ -9,6 +9,7 @@ import Login from './screens/Login';
 import Home from './screens/Home';
 import PassManager from './screens/PassManager';
 import Authenticate from './screens/Authenticate';
+import EditService from './screens/EditService';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,7 @@ function MyStack() {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="PassManager" component={PassManager}/>
       <Stack.Screen name="Authenticate" component={Authenticate}/>
+      <Stack.Screen name="EditService" component={EditService}/>
     </Stack.Navigator>
   );
 }

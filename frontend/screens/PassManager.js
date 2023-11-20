@@ -16,7 +16,6 @@ export default function PassManager({navigation}){
         <Drawer.Navigator>
             <Drawer.Screen name="Manage Apps" component={ManageApp}></Drawer.Screen>
             <Drawer.Screen name="Add service" component={AddService}></Drawer.Screen>
-            <Drawer.Screen name="Edit service" component={EditService}></Drawer.Screen>
             <Drawer.Screen name="Logout" component={Logout}></Drawer.Screen>
         </Drawer.Navigator>
     );

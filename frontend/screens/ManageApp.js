@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable, Alert } from 'react-native';
 import NewService from '../components/NewService';
 import Service from '../components/Service';
 import { useState, useEffect } from 'react';
 import api from '../api';
 import EditService from './EditService';
+import { StatusBar } from 'expo-status-bar';
 
-const ManageApp = (navigation) => {
+export default function ManageApp({navigation}) {
   const [services, setServices] = useState(null);
   useEffect(() => {
     api.get('/main/services/list/')
@@ -23,16 +24,27 @@ const ManageApp = (navigation) => {
 
   const handleLongPress = (item) => {
     console.log('Long Pressed item:', item);
+    api.post(`/main/services/delete/${item.pk}/`)
+    .then(response => {
+      return response.data
+    })
+    .then(data => {
+      Alert.alert(data.message);
+    })
+    .catch(error => {
+      console.warn(error);
+    })
   };
 
   const handlePress = (item) => {
-    //navigation.navigate(EditService, { serviceDetails: item }); Nie działa jak narazie pomyśleć
+    navigation.navigate('EditService', { serviceDetails: item });
     console.log('Pressed item:', item);
   };
 
   
   return (
     <View style={style.container}>
+      <StatusBar>This is a status bar</StatusBar>
       <Text style={style.title}>Your saved data</Text>
       <View style={style.list}>
       <FlatList 
@@ -50,7 +62,7 @@ const ManageApp = (navigation) => {
   );
 };
 
-export default ManageApp;
+
 
 const style = StyleSheet.create({
   container:{

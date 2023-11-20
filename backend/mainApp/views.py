@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_GET
+from django.db.models import Q
 from .models import UserProfile, CreditStorage
 from .serializers import CreditSerializer
 from django.contrib.auth.models import User
@@ -112,6 +113,20 @@ def add_service(request:HttpRequest):
     except Exception as e:
         print(e)
         return JsonResponse({"error": "Something went wrong when processing request"}, status=500)
+    
+@require_http_methods(["POST"])
+@csrf_exempt
+def delete_service(request:HttpRequest, id:int):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Please log in first"}, status=401)
+    try:
+        user = User.objects.filter(username=request.user.username).first()
+        CreditStorage.objects.get(Q(pk=id) & Q(user=user.pk)).delete()
+        return JsonResponse({"message": "Data deleted successfully"})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": "Something went wrong when processing request"}, status=500)    
+       
 
 @require_GET
 def list_services(request:HttpRequest):

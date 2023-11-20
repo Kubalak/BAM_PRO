@@ -1,16 +1,16 @@
 import React from "react";
 import api from "../api";
 import { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, Alert, StatusBar } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 import DisplayIcon from "../components/DisplayIcon";
 
 
-export default function EditService({navigation}){
-    const[username, setUsername] = useState('')
-    const[password, setPassword] = useState('')
-    const[name, setName] = useState('')
-    const[icon, setIcon] = useState()
+export default function EditService({navigation, route}){
+    const[username, setUsername] = useState(route.params.serviceDetails.username)
+    const[password, setPassword] = useState(route.params.serviceDetails.password)
+    const[name, setName] = useState(route.params.serviceDetails.name)
+    const[icon, setIcon] = useState(route.params.serviceDetails.icon)
 
     const editService = () => {
         const form = new FormData();
@@ -38,22 +38,25 @@ export default function EditService({navigation}){
     return (
         <View style={style.container}>
             <Text style={style.header}>
-                Add new credentials
+                Edit credentials
             </Text>
             <View style={style.form}>
                 <TextInput
                     placeholder="Service name"
+                    value={name}
                     onChangeText={(text) => setName(text)}
                     style={style.input}
                 />
                 <TextInput
                     placeholder="Service login"
+                    value={username}
                     onChangeText={(text) => setUsername(text)}
                     style={style.input}
                 />
                 <TextInput
                     placeholder="Service password"
                     secureTextEntry={true}
+                    value={password}
                     onChangeText={(text) => setPassword(text)}
                     style={style.input}
                 />
@@ -63,7 +66,6 @@ export default function EditService({navigation}){
                         style={style.input}
                         selectedValue={icon}
                         onValueChange={(value) => setIcon(value)}
-                        
                         placeholder="Select icon"
                     >
                         <Picker.Item label="Default" value='{"type": "fa", "name": "globe"}'/>
@@ -85,7 +87,9 @@ export default function EditService({navigation}){
 const style = StyleSheet.create({
     container:{
         flex: 1,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: StatusBar.currentHeight
     },
     header: {
         fontSize: 20,

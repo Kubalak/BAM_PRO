@@ -4,4 +4,4 @@ from .models import CreditStorage
 class CreditSerializer(ModelSerializer):
     class Meta:
         model = CreditStorage
-        fields = ['name', 'icon', 'username', 'password']
+        fields = ['pk', 'name', 'icon', 'username', 'password']
