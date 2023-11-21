@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { loginUser } from '../api';
 import api from '../api';
 import { TextInput, Button, Alert, StyleSheet, View, Text } from 'react-native';
-import * as LocalAuthentication from 'expo-local-authentication'
+
 
 
 
@@ -11,30 +11,6 @@ export default function Login({ navigation }) {
 
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
-    const [isBiometricSupported, setIsBiometricSupported] = React.useState(false);
-
-    const handleBiometricAuth = async () => {
-        try {
-            const { success, error } = await LocalAuthentication.authenticateAsync({
-                promptMessage: 'Please authenticate yourself'
-            });
-            if(success)
-                console.info(success)
-                console.info("Success");
-        }
-        catch(error){
-            console.error(error);
-        }
-    }
-
-
-    useEffect(() => {
-        (async () => {
-            const compatible = await LocalAuthentication.hasHardwareAsync();
-            setIsBiometricSupported(compatible);
-        })();
-        handleBiometricAuth();
-    },[]);
 
     const formDataLogin = new FormData();
     formDataLogin.append('username', username);
