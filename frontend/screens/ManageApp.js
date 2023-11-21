@@ -16,8 +16,9 @@ export default function ManageApp({ navigation }) {
 
   const loadData = () => {
     if (local === null) {
-      AsyncStorage.getItem('local').then(value => {
-        setLocal(JSON.parse(value))
+      AsyncStorage.getItem('local')
+      .then(value => {
+        setLocal(value !== null ? true : false)
       }).catch(e => {
         console.error(e);
         setLocal(false);
@@ -34,8 +35,7 @@ export default function ManageApp({ navigation }) {
           .catch(error => {
             console.error(error)
           })
-      }
-      else {
+      } else {
         SecureStore.getItemAsync('credits')
           .then(value => {
             setServices(value === null ? [] : JSON.parse(value))
