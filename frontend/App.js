@@ -1,3 +1,20 @@
+/**
+ * @module App
+ * @description Główny plik aplikacji zawierający konfigurację nawigacji.
+ * @requires react-native-gesture-handler
+ * @requires react
+ * @requires @react-navigation/native
+ * @requires ./api
+ * @requires @react-navigation/stack
+ * @requires @react-navigation/native
+ * @requires @react-native-async-storage/async-storage
+ * @requires ./screens/Register
+ * @requires ./screens/Login
+ * @requires ./screens/Home
+ * @requires ./screens/PassManager
+ * @requires ./screens/Authenticate
+ * @requires ./screens/EditService
+ */
 import 'react-native-gesture-handler';
 import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native'
@@ -14,8 +31,13 @@ import EditService from './screens/EditService';
 
 const Stack = createStackNavigator();
 
-/*      
-      <Stack.Screen name="Settings" component={Settings} /> */
+/**
+ * Funkcja konfigurująca stos nawigacyjny aplikacji.
+ * @returns {React.Component} Komponent React z nawigacją.
+ * @requires useNavigation
+ * @requires AsyncStorage
+ * @requires api
+ */
 
 function MyStack() {
   const navigation = useNavigation();
@@ -28,7 +50,7 @@ function MyStack() {
             routes: [{ name: 'PassManager' }]
           });
       })
-      .catch(error => { })
+      .catch(error => { }) // Obsługa błędu AsyncStorage
 
     api.get('/main/status')
       .then(response => {
@@ -60,6 +82,12 @@ function MyStack() {
   );
 }
 
+/**
+ * Główny komponent aplikacji, zawierający kontener nawigacji.
+ * @returns {React.Component} Komponent React z kontenerem nawigacji.
+ * @requires NavigationContainer
+ * @requires MyStack
+ */
 export default function App() {
   return (
     <NavigationContainer>
