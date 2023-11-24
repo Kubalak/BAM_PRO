@@ -1,3 +1,19 @@
+/**
+ * @file Login.js - Komponent odpowiedzialny za proces logowania.
+ * Wykorzystuje React, useState, useEffect, loginUser z '../api', TextInput, Button, Alert, StyleSheet, View, Text z 'react-native'.
+ * Umożliwia użytkownikowi logowanie się do aplikacji poprzez API.
+ * 
+ * @requires React
+ * @requires useState
+ * @requires useEffect
+ * @requires loginUser
+ * @requires TextInput
+ * @requires Button
+ * @requires Alert
+ * @requires StyleSheet
+ * @requires View
+ * @requires Text
+ */
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { loginUser } from '../api';
@@ -6,16 +22,22 @@ import { TextInput, Button, Alert, StyleSheet, View, Text } from 'react-native';
 
 
 
-
+/**
+ * Komponent Login
+ * @param {object} navigation - Obiekt nawigacji.
+ * @returns {JSX.Element} - Zwraca widok logowania.
+ */
 export default function Login({ navigation }) {
-
+    // Stany komponentu
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
 
+    // Tworzenie formularza danych logowania
     const formDataLogin = new FormData();
     formDataLogin.append('username', username);
     formDataLogin.append('password', password);
 
+    // Obsługa procesu logowania
     const handleLogin = async () => {
         const response = await loginUser(formDataLogin);
         if (response) {
@@ -31,6 +53,8 @@ export default function Login({ navigation }) {
             }
         };
     }
+
+    // Renderowanie komponentu
     return (
         <View style={styles.container}>
             <View style={styles.form}>
@@ -58,6 +82,7 @@ export default function Login({ navigation }) {
     );
 };
 
+// Style dla komponentu
 const styles = StyleSheet.create({
     container:{
         flex: 1,

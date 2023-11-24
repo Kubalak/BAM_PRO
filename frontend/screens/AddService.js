@@ -1,3 +1,24 @@
+/**
+ * @file AddService.js - Komponent do dodawania nowych poświadczeń usługowych.
+ * Wykorzystuje React, AsyncStorage, SecureStore i komponenty React Native.
+ * Zawiera formularz do wprowadzenia danych usługowych oraz wybór ikony.
+ * Obsługuje zapisywanie danych lokalnie lub poprzez API.
+ * 
+ * @requires React
+ * @requires api
+ * @requires useState
+ * @requires useEffect
+ * @requires View
+ * @requires Text
+ * @requires TextInput
+ * @requires Pressable
+ * @requires StyleSheet
+ * @requires Alert
+ * @requires Picker
+ * @requires AsyncStorage
+ * @requires SecureStore
+ * @requires DisplayIcon
+ */
 import React from "react";
 import api from "../api";
 import { useState, useEffect } from "react";
@@ -7,8 +28,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import DisplayIcon from "../components/DisplayIcon";
 
-
+/**
+ * Komponent AddService
+ * @param {object} navigation - Obiekt nawigacji.
+ * @returns {JSX.Element} - Zwraca widok dodawania nowych poświadczeń.
+ */
 export default function AddService({ navigation }) {
+    // Stan komponentu
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [name, setName] = useState('')
@@ -25,7 +51,9 @@ export default function AddService({ navigation }) {
             })
     }, [])
 
+    // Funkcja zapisująca dane usługowe
     const saveService = () => {
+        // Zapis przez API
         if (!local) {
             const form = new FormData();
             form.append('name', name)
@@ -48,6 +76,7 @@ export default function AddService({ navigation }) {
                     console.warn(error);
                 })
         } else {
+            //Zapis lokalny
             SecureStore.getItemAsync('credits')
                 .then(value => {
                     let values = (value === null) ? [] : JSON.parse(value);
@@ -73,6 +102,7 @@ export default function AddService({ navigation }) {
         }
     }
 
+    // Renderowanie komponentu
     return (
         <View style={style.container}>
             <Text style={style.header}>
@@ -119,6 +149,7 @@ export default function AddService({ navigation }) {
     )
 }
 
+// Style dla komponentu
 const style = StyleSheet.create({
     container: {
         flex: 1,

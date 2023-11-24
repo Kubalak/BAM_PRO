@@ -1,3 +1,23 @@
+/**
+ * @file EditService.js - Komponent do edycji istniejących danych usługowych.
+ * Wykorzystuje React, TextInput, Pressable, StyleSheet, Alert, StatusBar, SecureStore i komponenty React Native.
+ * Obsługuje edycję danych usługowych oraz zapisywanie ich lokalnie lub poprzez API.
+ * 
+ * @requires React
+ * @requires useState
+ * @requires View
+ * @requires Text
+ * @requires TextInput
+ * @requires Pressable
+ * @requires StyleSheet
+ * @requires Alert
+ * @requires StatusBar
+ * @requires SecureStore
+ * @requires Picker
+ * @requires DisplayIcon
+ * @requires api
+ */
+
 import React from "react";
 import api from "../api";
 import { useState } from "react";
@@ -6,16 +26,24 @@ import * as SecureStore from 'expo-secure-store';
 import { Picker } from '@react-native-picker/picker';
 import DisplayIcon from "../components/DisplayIcon";
 
-
+/**
+ * Komponent EditService
+ * @param {object} navigation - Obiekt nawigacji.
+ * @param {object} route - Obiekt zawierający parametry przekazane do nawigacji.
+ * @returns {JSX.Element} - Zwraca widok edycji danych usługowych.
+ */
 export default function EditService({ navigation, route }) {
+     // Stan komponentu
     const [username, setUsername] = useState(route.params.serviceDetails.username)
     const [password, setPassword] = useState(route.params.serviceDetails.password)
     const [name, setName] = useState(route.params.serviceDetails.name)
     const [icon, setIcon] = useState(route.params.serviceDetails.icon)
     const local = route.params.local;
 
+    // Funkcja do edycji danych usługowych
     const editService = () => {
         if (!local) {
+            //Edycja poprzez api
             const form = new FormData();
             form.append('name', name)
             form.append('username', username)
@@ -37,6 +65,7 @@ export default function EditService({ navigation, route }) {
                     console.warn(error);
                 })
         } else {
+            //Edycja danych lokalnie
             SecureStore.getItemAsync('credits')
                 .then(response => {
                     let values = JSON.parse(response)
@@ -57,6 +86,7 @@ export default function EditService({ navigation, route }) {
         }
     }
 
+    // Renderowanie komponentu
     return (
         <View style={style.container}>
             <Text style={style.header}>
@@ -106,6 +136,7 @@ export default function EditService({ navigation, route }) {
     )
 }
 
+//Style dla komponentu
 const style = StyleSheet.create({
     container: {
         flex: 1,

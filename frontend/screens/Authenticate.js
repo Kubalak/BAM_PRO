@@ -1,19 +1,44 @@
+/**
+ * @file Authenticate.js - Komponent do uwierzytelniania użytkownika przez drugi etap uwierzytelniania dwuetapowego.
+ * Wykorzystuje React, TextInput, Button, Alert, StyleSheet i komponenty React Native.
+ * Obsługuje uwierzytelnianie użytkownika z wykorzystaniem drugiego czynnika (np. kodu TOTP).
+ * 
+ * @requires React
+ * @requires useState
+ * @requires useEffect
+ * @requires TextInput
+ * @requires Button
+ * @requires Alert
+ * @requires StyleSheet
+ * @requires View
+ * @requires authenticate2FA
+ * @requires loginUser
+ * @requires api
+ */
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { authenticate2FA, loginUser } from '../api';
 import api from '../api';
 import { TextInput, Button, Alert, StyleSheet, View} from 'react-native';
 
+/**
+ * Komponent Authenticate
+ * @param {object} route - Obiekt zawierający parametry przekazane do nawigacji.
+ * @param {object} navigation - Obiekt nawigacji.
+ * @returns {JSX.Element} - Zwraca widok uwierzytelniania użytkownika przez drugi etap uwierzytelniania dwuetapowego.
+ */
 export default function Authenticate({route, navigation}) {
-
+    // Stan komponentu
     const [password2FA, setPassword2FA] = useState('');
 
+    // Tworzenie formularza z danymi dla drugiego czynnika uwierzytelniania
     const formData2FA = new FormData();
     formData2FA.append('username', route.params.usernameParam);
     formData2FA.append('password', route.params.passParam);
     formData2FA.append('password2FA', password2FA);
     console.log(formData2FA);
 
+    // Obsługa uwierzytelniania przez drugi etap
     const handle2FA = async () => {
         const response = await authenticate2FA(formData2FA);
         console.log(response)
@@ -31,6 +56,8 @@ export default function Authenticate({route, navigation}) {
             }
         };
     }
+
+    // Renderowanie komponentu
     return (
         <View style={styles.container}>
             <TextInput
@@ -46,6 +73,7 @@ export default function Authenticate({route, navigation}) {
     );
 };
 
+// Style dla komponentu
 const styles = StyleSheet.create({
     container:{
         flex: 1,

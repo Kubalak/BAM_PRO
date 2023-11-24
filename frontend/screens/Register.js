@@ -1,9 +1,34 @@
+/**
+ * @file Register.js - Komponent obsługujący rejestrację użytkownika.
+ * Wykorzystuje React, useState z 'react', Modal, Text, TouchableOpacity, TextInput, Button, Alert, StyleSheet, View z 'react-native',
+ * Clipboard z 'expo-clipboard', registerUser z '../api'.
+ * Odpowiada za interfejs rejestracji użytkownika, przetwarzanie danych rejestracji, wyświetlanie komunikatów, wyświetlanie i kopiowanie tajnego klucza.
+ * 
+ * @requires React
+ * @requires useState
+ * @requires Modal
+ * @requires Text
+ * @requires TouchableOpacity
+ * @requires TextInput
+ * @requires Button
+ * @requires Alert
+ * @requires StyleSheet
+ * @requires View
+ * @requires Clipboard
+ * @requires registerUser
+ */
 import { useState } from 'react';
 import { registerUser } from '../api';
 import { Modal, Text, TouchableOpacity, TextInput, Button, Alert, StyleSheet, View } from 'react-native';
 import * as Clipboard from "expo-clipboard"
 
+/**
+ * Komponent Register
+ * @param {object} navigation - Obiekt nawigacji.
+ * @returns {JSX.Element} - Zwraca interfejs rejestracji użytkownika.
+ */
 export default function Register({ navigation }) {
+  // Stany przechowujące dane rejestracji
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password1, setPassword1] = useState('');
@@ -11,12 +36,14 @@ export default function Register({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [secretKey, setSecretKey] = useState('');
 
+  // Tworzenie obiektu FormData z danymi rejestracji
   const formDataRegister = new FormData();
   formDataRegister.append('username', username);
   formDataRegister.append('email', email);
   formDataRegister.append('password1', password1);
   formDataRegister.append('password2', password2);
 
+  // Obsługa rejestracji użytkownika
   const handleRegister = async () => {
     const response = await registerUser(formDataRegister);
     if (response) {
@@ -35,11 +62,13 @@ export default function Register({ navigation }) {
     }
   };
 
+  // Kopiowanie tajnego klucza do schowka
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(secretKey);
     Alert.alert('Secret key copied to clipboard');
   };
 
+  // Renderowanie interfejsu
   return (
     <View style={styles.container}>
       <TextInput
@@ -107,6 +136,7 @@ export default function Register({ navigation }) {
   );
 };
 
+// Style dla komponentu
 const styles = StyleSheet.create({
   container: {
     flex: 1,

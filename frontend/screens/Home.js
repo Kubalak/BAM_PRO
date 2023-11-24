@@ -1,7 +1,26 @@
+/**
+ * @file Home.js - Komponent głównej strony aplikacji.
+ * Wykorzystuje React Native, AsyncStorage, View, Text, Pressable i StyleSheet.
+ * Odpowiada za interfejs głównej strony, umożliwiając nawigację do logowania, rejestracji oraz używanie lokalnego przechowywania danych.
+ * 
+ * @requires React Native
+ * @requires AsyncStorage
+ * @requires View
+ * @requires Text
+ * @requires Pressable
+ * @requires StyleSheet
+ */
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+/**
+ * Komponent Home
+ * @param {object} navigation - Obiekt nawigacji.
+ * @returns {JSX.Element} - Zwraca widok głównej strony aplikacji.
+ */
 export default function Home({ navigation }) {
+    // Funkcja rozpoczynająca używanie lokalnego przechowywania danych
     const startLocal = async () => {
         try {
             await AsyncStorage.setItem('local', 'true');
@@ -14,6 +33,8 @@ export default function Home({ navigation }) {
         }
 
     }
+
+    // Renderowanie komponentu
     return (
         <View style={style.container}>
             <View style={style.button}>
@@ -29,6 +50,7 @@ export default function Home({ navigation }) {
     )
 }
 
+// Style dla komponentu
 const style = StyleSheet.create({
     button: {
         marginBottom: 10,

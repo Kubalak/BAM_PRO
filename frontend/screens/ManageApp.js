@@ -1,3 +1,26 @@
+/**
+ * @file ManageApp.js - Komponent zarządzający aplikacją.
+ * Wykorzystuje React, useState, useEffect z 'react', StatusBar z 'expo-status-bar',
+ * View, Text, FlatList, StyleSheet, Pressable, Alert z 'react-native', Ionicons z '@expo/vector-icons',
+ * AsyncStorage, SecureStore z 'expo-secure-store', NewService i Service z odpowiednich komponentów.
+ * Odpowiada za zarządzanie usługami w aplikacji, wyświetlanie, dodawanie, usuwanie oraz edycję usług.
+ * 
+ * @requires React
+ * @requires useState
+ * @requires useEffect
+ * @requires StatusBar
+ * @requires View
+ * @requires Text
+ * @requires FlatList
+ * @requires StyleSheet
+ * @requires Pressable
+ * @requires Alert
+ * @requires Ionicons
+ * @requires AsyncStorage
+ * @requires SecureStore
+ * @requires NewService
+ * @requires Service
+ */
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -9,11 +32,17 @@ import NewService from '../components/NewService';
 import Service from '../components/Service';
 import api from '../api';
 
-
+/**
+ * Komponent ManageApp
+ * @param {object} navigation - Obiekt nawigacji.
+ * @returns {JSX.Element} - Zwraca interfejs zarządzania aplikacją.
+ */
 export default function ManageApp({ navigation }) {
+  // Stany komponentu
   const [services, setServices] = useState(null);
   const [local, setLocal] = useState(null);
 
+  // Funkcja do wczytywania danych
   const loadData = () => {
     if (local === null) {
       AsyncStorage.getItem('local')
@@ -46,10 +75,13 @@ export default function ManageApp({ navigation }) {
       }
     }
   }
+
+  // Efekt wykonywany przy zmianie stanu lokalnego
   useEffect(() => {
     loadData()
   }, [local])
 
+   // Funkcja obsługująca długie naciśnięcie na element
   const handleLongPress = (item) => {
     console.log('Long Pressed item:', item);
     if (!local) {
@@ -78,12 +110,13 @@ export default function ManageApp({ navigation }) {
     }
   };
 
+  // Funkcja obsługująca naciśnięcie na element
   const handlePress = (item) => {
     navigation.navigate('EditService', { serviceDetails: item, local: local });
     console.log('Pressed item:', item);
   };
 
-
+  // Renderowanie komponentu
   return (
     <View style={style.container}>
       <StatusBar>This is a status bar</StatusBar>
@@ -106,7 +139,7 @@ export default function ManageApp({ navigation }) {
 };
 
 
-
+// Style dla komponentu
 const style = StyleSheet.create({
   container: {
     flex: 1,
