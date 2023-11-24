@@ -12,6 +12,9 @@ backend.asgi module
    :undoc-members:
    :show-inheritance:
 
+.. literalinclude:: ../backend/asgi.py
+   :language: Python
+
 backend.settings module
 -----------------------
 
@@ -19,6 +22,9 @@ backend.settings module
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. literalinclude:: ../backend/settings.py
+   :language: Python
 
 backend.urls module
 -------------------
@@ -28,6 +34,9 @@ backend.urls module
    :undoc-members:
    :show-inheritance:
 
+.. literalinclude:: ../backend/urls.py
+   :language: Python
+
 backend.wsgi module
 -------------------
 
@@ -35,6 +44,9 @@ backend.wsgi module
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. literalinclude:: ../backend/wsgi.py
+   :language: Python
 
 Module contents
 ---------------
