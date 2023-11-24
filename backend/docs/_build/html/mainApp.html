@@ -129,6 +129,21 @@
 </section>
 <section id="module-mainApp.admin">
 <span id="mainapp-admin-module"></span><h2>mainApp.admin module<a class="headerlink" href="#module-mainApp.admin" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Rejestruje modele Django w panelu admina.</span>
+
+<span class="sd">Automatycznie rejestruje modele `UserProfile` i `CreditStorage` w panelu admina Django,</span>
+<span class="sd">umożliwiając ich zarządzanie przez interfejs administracyjny.</span>
+
+<span class="sd">:return: Brak zwracanej wartości.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">UserProfile</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditStorage</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.apps">
 <span id="mainapp-apps-module"></span><h2>mainApp.apps module<a class="headerlink" href="#module-mainApp.apps" title="Link to this heading"></a></h2>
@@ -159,6 +174,25 @@ Zawiera parametr <cite>default_auto_field</cite>, który określa domyślne pole
 
 </dd></dl>
 
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.apps</span> <span class="kn">import</span> <span class="n">AppConfig</span>
+
+
+<span class="k">class</span> <span class="nc">MainappConfig</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Konfiguracja aplikacji Django o nazwie &#39;mainApp&#39;.</span>
+
+<span class="sd">    Klasa `MainappConfig` definiuje konfigurację głównej aplikacji Django o nazwie &#39;mainApp&#39;.</span>
+<span class="sd">    Zawiera parametr `default_auto_field`, który określa domyślne pole automatyczne dla modeli.</span>
+
+<span class="sd">    :ivar default_auto_field: Pole automatyczne używane jako domyślne dla modeli w aplikacji.</span>
+<span class="sd">    :vartype default_auto_field: str</span>
+<span class="sd">    :ivar name: Nazwa aplikacji Django.</span>
+<span class="sd">    :vartype name: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default_auto_field</span> <span class="o">=</span> <span class="s1">&#39;django.db.models.BigAutoField&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;mainApp&#39;</span>
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.forms">
 <span id="mainapp-forms-module"></span><h2>mainApp.forms module<a class="headerlink" href="#module-mainApp.forms" title="Link to this heading"></a></h2>
@@ -230,6 +264,49 @@ do bazy danych.</p>
 
 </dd></dl>
 
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.forms</span> <span class="kn">import</span> <span class="n">UserCreationForm</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span>
+<span class="kn">from</span> <span class="nn">django_otp.plugins.otp_totp.models</span> <span class="kn">import</span> <span class="n">TOTPDevice</span>
+
+<span class="k">class</span> <span class="nc">UserForm</span><span class="p">(</span><span class="n">UserCreationForm</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formularz rejestracji użytkownika.</span>
+
+<span class="sd">    Klasa `UserForm` dziedziczy po `UserCreationForm` i dodaje pole email.</span>
+<span class="sd">    Używa modelu `User` i zawiera funkcję `save()`, która zapisuje użytkownika</span>
+<span class="sd">    do bazy danych.</span>
+
+<span class="sd">    :ivar email: Pole email użytkownika.</span>
+<span class="sd">    :vartype email: forms.EmailField</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+	<span class="n">email</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+		<span class="n">model</span> <span class="o">=</span> <span class="n">User</span>
+		<span class="n">fields</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="s2">&quot;password1&quot;</span><span class="p">,</span> <span class="s2">&quot;password2&quot;</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Zapisuje użytkownika do bazy danych.</span>
+
+<span class="sd">        Funkcja `save()` zapisuje nowego użytkownika do bazy danych.</span>
+<span class="sd">        Jeśli `commit` jest ustawione na `True`, użytkownik zostanie zapisany</span>
+<span class="sd">        do bazy danych.</span>
+
+<span class="sd">        :param commit: Flaga wskazująca, czy zapisać użytkownika do bazy danych. Domyślnie True.</span>
+<span class="sd">        :type commit: bool</span>
+<span class="sd">        :return: Użytkownik zapisany w bazie danych.</span>
+<span class="sd">        :rtype: User</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+		<span class="n">user</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">UserForm</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="n">user</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">commit</span><span class="p">:</span>
+			<span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">user</span>
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.models">
 <span id="mainapp-models-module"></span><h2>mainApp.models module<a class="headerlink" href="#module-mainApp.models" title="Link to this heading"></a></h2>
@@ -398,6 +475,54 @@ object the first time, the query is executed.</p>
 
 </dd></dl>
 
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django_otp.plugins.otp_totp.models</span> <span class="kn">import</span> <span class="n">TOTPDevice</span>
+<span class="kn">from</span> <span class="nn">django_cryptography.fields</span> <span class="kn">import</span> <span class="n">encrypt</span>
+
+
+<span class="k">class</span> <span class="nc">UserProfile</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profil użytkownika aplikacji.</span>
+
+<span class="sd">    Klasa `UserProfile` definiuje profil użytkownika, powiązany z modelem wbudowanym `User`.</span>
+<span class="sd">    Zawiera również pole `totp_device` reprezentujące urządzenie TOTP (Time-based One-Time Password).</span>
+
+<span class="sd">    :ivar user: Powiązanie z modelem użytkownika Django.</span>
+<span class="sd">    :vartype user: User</span>
+<span class="sd">    :ivar totp_device: Powiązanie z urządzeniem TOTP (opcjonalne).</span>
+<span class="sd">    :vartype totp_device: TOTPDevice</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">totp_device</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">TOTPDevice</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CreditStorage</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Przechowywanie danych związanego z zapisanymi serwisami.</span>
+
+<span class="sd">    Klasa `CreditStorage` definiuje model przechowujący dane związane z serwisami.</span>
+<span class="sd">    Powiązany jest z modelem `User` reprezentującym użytkownika.</span>
+
+<span class="sd">    :ivar user: Powiązanie z modelem użytkownika Django.</span>
+<span class="sd">    :vartype user: User</span>
+<span class="sd">    :ivar name: Nazwa przechowywanych danych.</span>
+<span class="sd">    :vartype name: str</span>
+<span class="sd">    :ivar icon: Ikona powiązana z danymi serwisu (w formacie JSON).</span>
+<span class="sd">    :vartype icon: dict</span>
+<span class="sd">    :ivar username: Zaszyfrowane pole przechowujące nazwę użytkownika.</span>
+<span class="sd">    :vartype username: encrypt</span>
+<span class="sd">    :ivar password: Zaszyfrowane pole przechowujące hasło użytkownika.</span>
+<span class="sd">    :vartype password: encrypt</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">icon</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">))</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">150</span><span class="p">))</span>
+    
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.serializers">
 <span id="mainapp-serializers-module"></span><h2>mainApp.serializers module<a class="headerlink" href="#module-mainApp.serializers" title="Link to this heading"></a></h2>
@@ -427,12 +552,64 @@ Konwertuje dane modelu na format JSON do wykorzystania w interfejsach API.</p>
 
 </dd></dl>
 
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rest_framework.serializers</span> <span class="kn">import</span> <span class="n">ModelSerializer</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">CreditStorage</span>
+
+<span class="k">class</span> <span class="nc">CreditSerializer</span><span class="p">(</span><span class="n">ModelSerializer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serializer dla modelu `CreditStorage`.</span>
+
+<span class="sd">    Klasa `CreditSerializer` służy do serializacji modelu `CreditStorage`.</span>
+<span class="sd">    Konwertuje dane modelu na format JSON do wykorzystania w interfejsach API.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditStorage</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;icon&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.tests">
 <span id="mainapp-tests-module"></span><h2>mainApp.tests module<a class="headerlink" href="#module-mainApp.tests" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+
+<span class="c1"># Create your tests here.</span>
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.urls">
 <span id="mainapp-urls-module"></span><h2>mainApp.urls module<a class="headerlink" href="#module-mainApp.urls" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;register/&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">register_view</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;register&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok rejestracji nowego użytkownika</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;login/&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">login_view</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;login&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok logowania użytkownika</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;logout/&quot;</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">views</span><span class="o">.</span><span class="n">user_logout</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;logout&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok wylogowania użytkownika</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;status/&quot;</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">views</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;status&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok zwracający status uwierzytelnienia użytkownika</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;authenticate/&quot;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">authenticate_view</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;authenticate&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok uwierzytelniania użytkownika z dwuetapową weryfikacją</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;service/add/&quot;</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">views</span><span class="o">.</span><span class="n">add_service</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;add_service&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok dodawania nowej usługi</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;services/list/&quot;</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">views</span><span class="o">.</span><span class="n">list_services</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok listowania usług użytkownika</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s2">&quot;services/delete/&lt;int:id&gt;/&quot;</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">views</span><span class="o">.</span><span class="n">delete_service</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">),</span>
+    <span class="c1"># Widok usuwania usługi</span>
+<span class="p">]</span>
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp.views">
 <span id="mainapp-views-module"></span><h2>mainApp.views module<a class="headerlink" href="#module-mainApp.views" title="Link to this heading"></a></h2>
@@ -578,6 +755,226 @@ Po sukcesie zwraca komunikat o rejestracji oraz wygenerowany sekret TOTP.</p>
 </dl>
 </dd></dl>
 
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpRequest</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.http</span> <span class="kn">import</span> <span class="n">require_http_methods</span><span class="p">,</span> <span class="n">require_GET</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span><span class="p">,</span> <span class="n">CreditStorage</span>
+<span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">CreditSerializer</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">logout</span>
+<span class="kn">from</span> <span class="nn">django_otp.plugins.otp_totp.models</span> <span class="kn">import</span> <span class="n">TOTPDevice</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b32encode</span>
+
+<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok wyświetlający prosty komunikat &quot;Hello there from index!&quot;.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: HttpResponse z komunikatem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello there from index!&quot;</span><span class="p">)</span>
+
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">register_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok rejestracji nowego użytkownika.</span>
+
+<span class="sd">    Obsługuje żądania typu POST zawierające dane niezbędne do rejestracji nowego użytkownika.</span>
+<span class="sd">    Po sukcesie zwraca komunikat o rejestracji oraz wygenerowany sekret TOTP.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z komunikatem o sukcesie lub błędzie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+            <span class="n">password1</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password1&#39;</span><span class="p">)</span>
+            <span class="n">password2</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password2&#39;</span><span class="p">)</span>
+
+            <span class="c1"># check password</span>
+            <span class="k">if</span> <span class="n">password1</span> <span class="o">!=</span> <span class="n">password2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Passwords do not match&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="mi">400</span><span class="p">})</span>
+
+            <span class="c1"># check username</span>
+            <span class="k">if</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Username is already taken&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="mi">401</span><span class="p">})</span>
+
+            <span class="c1"># Create the user</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password1</span><span class="p">)</span>
+            <span class="n">totp_device</span> <span class="o">=</span> <span class="n">TOTPDevice</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">confirmed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">totp_device</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">TOTPDevice</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">secret_key</span> <span class="o">=</span> <span class="n">b32encode</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">bin_key</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="n">profile</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">profile</span><span class="o">.</span><span class="n">totp_device</span> <span class="o">=</span> <span class="n">totp_device</span>
+            <span class="n">profile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">secret_key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;User registered successfully.&#39;</span><span class="p">,</span> <span class="s1">&#39;secret&#39;</span><span class="p">:</span><span class="n">secret_key</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">})</span>
+        
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>  <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">})</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">405</span><span class="p">})</span>
+    
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">login_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok logowania użytkownika.</span>
+
+<span class="sd">    Obsługuje żądania typu POST zawierające dane logowania.</span>
+<span class="sd">    Zwraca komunikat po pomyślnym zalogowaniu lub błąd przy nieudanym logowaniu.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z komunikatem o sukcesie lub błędzie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
+
+            <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span><span class="s1">&#39;All good in sucessfully&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="s1">&#39;Invalid username or password&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">400</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>  <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">405</span><span class="p">})</span>
+
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">authenticate_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok uwierzytelniania użytkownika z dwuetapową weryfikacją.</span>
+
+<span class="sd">    Obsługuje żądania typu POST zawierające dane uwierzytelniania i kod dwuetapowy TOTP.</span>
+<span class="sd">    Dokonuje uwierzytelniania użytkownika i kodu TOTP, zwraca komunikat o sukcesie lub błędzie.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z komunikatem o sukcesie lub błędzie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
+            <span class="n">totp_code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password2FA&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">totp_code</span><span class="p">)</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+            <span class="n">totp_device</span> <span class="o">=</span> <span class="n">TOTPDevice</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Totp_device&quot;</span><span class="p">,</span> <span class="n">totp_device</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">totp_device</span><span class="o">.</span><span class="n">verify_token</span><span class="p">(</span><span class="n">totp_code</span><span class="p">):</span>
+                <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;User logged in successfully&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">})</span> 
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid 2FA code&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">400</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">},</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">405</span><span class="p">})</span>
+
+
+<span class="nd">@require_GET</span>
+<span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok zwracający status uwierzytelnienia użytkownika.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z informacją o stanie uwierzytelnienia</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;authenticated&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">})</span>
+
+<span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">add_service</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok dodawania nowej usługi.</span>
+
+<span class="sd">    Dodaje nową usługę do bazy danych, wymaga uwierzytelnienia.</span>
+<span class="sd">    Otrzymuje dane usługi (nazwę, użytkownika, hasło, ikonę) i zapisuje je do bazy danych.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z komunikatem o sukcesie lub błędzie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;icon&quot;</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">CreditStorage</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+            <span class="n">icon</span><span class="o">=</span><span class="n">icon</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Credentials saved successfully!&quot;</span><span class="p">})</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Something went wrong when processing request&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+    
+<span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">delete_service</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok usuwania usługi.</span>
+
+<span class="sd">    Usuwa usługę z bazy danych na podstawie przekazanego identyfikatora.</span>
+<span class="sd">    Wymaga uwierzytelnienia.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :param id: Identyfikator usługi do usunięcia</span>
+<span class="sd">    :return: JsonResponse z komunikatem o sukcesie lub błędzie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">CreditStorage</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">Q</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">))</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Data deleted successfully&quot;</span><span class="p">})</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Something went wrong when processing request&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>    
+       
+
+<span class="nd">@require_GET</span>
+<span class="k">def</span> <span class="nf">list_services</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok listowania usług użytkownika.</span>
+
+<span class="sd">    Zwraca listę usług użytkownika z bazy danych.</span>
+<span class="sd">    Wymaga uwierzytelnienia.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z listą usług lub komunikatem o błędzie</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">CreditStorage</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;services&quot;</span><span class="p">:</span> <span class="n">CreditSerializer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">})</span>
+
+<span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">user_logout</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok wylogowania użytkownika.</span>
+
+<span class="sd">    Wylogowuje użytkownika z systemu.</span>
+
+<span class="sd">    :param request: HttpRequest</span>
+<span class="sd">    :return: JsonResponse z komunikatem o wylogowaniu</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Logout successfull&quot;</span><span class="p">})</span>
+        
+        
+</pre></div>
+</div>
 </section>
 <section id="module-mainApp">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-mainApp" title="Link to this heading"></a></h2>
