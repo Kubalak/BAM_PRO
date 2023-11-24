@@ -10,10 +10,25 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from base64 import b32encode
 
 def index(request):
+    """
+    Widok wyświetlający prosty komunikat "Hello there from index!".
+
+    :param request: HttpRequest
+    :return: HttpResponse z komunikatem
+    """
     return HttpResponse("Hello there from index!")
 
 @csrf_exempt
 def register_view(request):
+    """
+    Widok rejestracji nowego użytkownika.
+
+    Obsługuje żądania typu POST zawierające dane niezbędne do rejestracji nowego użytkownika.
+    Po sukcesie zwraca komunikat o rejestracji oraz wygenerowany sekret TOTP.
+
+    :param request: HttpRequest
+    :return: JsonResponse z komunikatem o sukcesie lub błędzie
+    """
     if request.method == 'POST':
         try:
             username = request.POST.get('username')
@@ -49,6 +64,15 @@ def register_view(request):
     
 @csrf_exempt
 def login_view(request):
+    """
+    Widok logowania użytkownika.
+
+    Obsługuje żądania typu POST zawierające dane logowania.
+    Zwraca komunikat po pomyślnym zalogowaniu lub błąd przy nieudanym logowaniu.
+
+    :param request: HttpRequest
+    :return: JsonResponse z komunikatem o sukcesie lub błędzie
+    """
     if request.method == 'POST':
         try:
             username = request.POST.get('username')
@@ -66,6 +90,15 @@ def login_view(request):
 
 @csrf_exempt
 def authenticate_view(request):
+    """
+    Widok uwierzytelniania użytkownika z dwuetapową weryfikacją.
+
+    Obsługuje żądania typu POST zawierające dane uwierzytelniania i kod dwuetapowy TOTP.
+    Dokonuje uwierzytelniania użytkownika i kodu TOTP, zwraca komunikat o sukcesie lub błędzie.
+
+    :param request: HttpRequest
+    :return: JsonResponse z komunikatem o sukcesie lub błędzie
+    """
     if request.method == 'POST':
         try:
             username = request.POST.get('username')
@@ -88,11 +121,26 @@ def authenticate_view(request):
 
 @require_GET
 def status(request):
+    """
+    Widok zwracający status uwierzytelnienia użytkownika.
+
+    :param request: HttpRequest
+    :return: JsonResponse z informacją o stanie uwierzytelnienia
+    """
     return JsonResponse({"authenticated": request.user.is_authenticated})
 
 @require_http_methods(["POST"])
 @csrf_exempt
 def add_service(request:HttpRequest):
+    """
+    Widok dodawania nowej usługi.
+
+    Dodaje nową usługę do bazy danych, wymaga uwierzytelnienia.
+    Otrzymuje dane usługi (nazwę, użytkownika, hasło, ikonę) i zapisuje je do bazy danych.
+
+    :param request: HttpRequest
+    :return: JsonResponse z komunikatem o sukcesie lub błędzie
+    """
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Please log in first"}, status=401)
     try:
@@ -116,6 +164,16 @@ def add_service(request:HttpRequest):
 @require_http_methods(["POST"])
 @csrf_exempt
 def delete_service(request:HttpRequest, id:int):
+    """
+    Widok usuwania usługi.
+
+    Usuwa usługę z bazy danych na podstawie przekazanego identyfikatora.
+    Wymaga uwierzytelnienia.
+
+    :param request: HttpRequest
+    :param id: Identyfikator usługi do usunięcia
+    :return: JsonResponse z komunikatem o sukcesie lub błędzie
+    """
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Please log in first"}, status=401)
     try:
@@ -129,6 +187,15 @@ def delete_service(request:HttpRequest, id:int):
 
 @require_GET
 def list_services(request:HttpRequest):
+    """
+    Widok listowania usług użytkownika.
+
+    Zwraca listę usług użytkownika z bazy danych.
+    Wymaga uwierzytelnienia.
+
+    :param request: HttpRequest
+    :return: JsonResponse z listą usług lub komunikatem o błędzie
+    """
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Please log in first"}, status=401)
     data = CreditStorage.objects.all().filter(user=request.user.pk)
@@ -137,6 +204,14 @@ def list_services(request:HttpRequest):
 @require_http_methods(["POST"])
 @csrf_exempt
 def user_logout(request):
+    """
+    Widok wylogowania użytkownika.
+
+    Wylogowuje użytkownika z systemu.
+
+    :param request: HttpRequest
+    :return: JsonResponse z komunikatem o wylogowaniu
+    """
     logout(request)
     return JsonResponse({"message": "Logout successfull"})
         
