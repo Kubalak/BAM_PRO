@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { authenticate2FA, loginUser } from '../api';
 import api from '../api';
 import { TextInput, Button, Alert, StyleSheet, View} from 'react-native';
 
@@ -36,25 +35,28 @@ export default function Authenticate({route, navigation}) {
     formData2FA.append('username', route.params.usernameParam);
     formData2FA.append('password', route.params.passParam);
     formData2FA.append('password2FA', password2FA);
-    console.log(formData2FA);
 
     // Obsługa uwierzytelniania przez drugi etap
-    const handle2FA = async () => {
-        const response = await authenticate2FA(formData2FA);
-        console.log(response)
-        if (response) {
-            if (response.status === 200) {
+    const handle2FA = () => {
+        api.post('/main/authenticate/', formData2FA, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(response => {
                 Alert.alert('Authentication successful', response.message);
                 navigation.reset({
                     routes: [{ name: 'PassManager' }]
                 });
-
-            } else if (response.status === 400) {
+            })
+        .catch(error => {
+            if(error.response && error.response.status === 400)
                 Alert.alert('Wrong 2FA code!', response.error);
-            } else {
+            else {
                 Alert.alert('Login Failed!', 'Unexpected response from the server');
+                console.error(error);
             }
-        };
+        })
     }
 
     // Renderowanie komponentu

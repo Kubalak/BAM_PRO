@@ -46,18 +46,15 @@ export default function Login({ navigation }) {
             }
         })
         .then(response => {
-            console.log(username, password)
             Alert.alert('Login successful', response.message);
             navigation.navigate('Authenticate', { usernameParam: username, passParam : password});
             
         })
         .catch(error => {
-            if(error.response && error.response.status === 400){
+            if(error.response && error.response.status === 400)
                 Alert.alert('Wrong username or password!', response.error);
-            }
-            else{
+            else
                 console.warn(error);
-            }
         })
     }
 

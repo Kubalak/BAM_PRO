@@ -19,6 +19,7 @@ import 'react-native-gesture-handler';
 import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native'
 import api from './api';
+import axios from 'axios';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,6 +53,7 @@ function MyStack() {
       })
       .catch(error => { }) // Obsługa błędu AsyncStorage
 
+      console.info(`Using API URL: ${api.defaults.baseURL}`)
     api.get('/main/status')
       .then(response => {
         return response.data

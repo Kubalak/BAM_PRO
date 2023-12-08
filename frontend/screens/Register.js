@@ -19,6 +19,7 @@
  */
 import { useState } from 'react';
 import { registerUser } from '../api';
+import api from '../api';
 import { Modal, Text, TouchableOpacity, TextInput, Button, Alert, StyleSheet, View } from 'react-native';
 import * as Clipboard from "expo-clipboard"
 
@@ -44,22 +45,31 @@ export default function Register({ navigation }) {
   formDataRegister.append('password2', password2);
 
   // Obsługa rejestracji użytkownika
-  const handleRegister = async () => {
-    const response = await registerUser(formDataRegister);
-    if (response) {
-      if (response.status === 200) {
-        if (response.secret) {
-          setModalVisible(true);
-          setSecretKey(response.secret);
-        }
-      } else if (response.status === 400) {
-        Alert.alert('Passwords dont match!', response.error);
-      } else if (response.status === 401) {
-        Alert.alert("Username exists", response.error);
+  const handleRegister = () => {
+    api.post('/main/register/', formDataRegister, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
       }
-    } else {
-      Alert.alert('Registration failed', 'Unexpected response from the server');
-    }
+    })
+    .then(response => {return response.data})
+    .then(data => {
+        if (data.secret) {
+          setModalVisible(true);
+          setSecretKey(data.secret);
+    }})
+    .catch(error => {
+        if(error.response){
+          if(error.response.status === 400)
+            Alert.alert('Passwords dont match!', error.response.error);
+          else if(error.response.status === 401)
+            Alert.alert("Username exists", response.error);
+          else
+          console.error(error.response);
+          
+        }
+        else
+          console.error(error)
+      })
   };
 
   // Kopiowanie tajnego klucza do schowka
