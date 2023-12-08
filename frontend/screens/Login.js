@@ -16,7 +16,6 @@
  */
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { loginUser } from '../api';
 import api from '../api';
 import { TextInput, Button, Alert, StyleSheet, View, Text } from 'react-native';
 
@@ -38,20 +37,28 @@ export default function Login({ navigation }) {
     formDataLogin.append('password', password);
 
     // Obsługa procesu logowania
-    const handleLogin = async () => {
-        const response = await loginUser(formDataLogin);
-        if (response) {
-            if (response.status === 200) {
-                console.log(username, password)
-                Alert.alert('Login successful', response.message);
-                navigation.navigate('Authenticate', { usernameParam: username, passParam : password});
-                
-            } else if (response.status === 400) {
-                Alert.alert('Wrong username or password!', response.error);
-            } else {
-                Alert.alert('Login Failed!', 'Unexpected response from the server');
+    const handleLogin = () => {
+        //const response = await loginUser(formDataLogin);
+        api.post('/main/login/', formDataLogin,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data'
             }
-        };
+        })
+        .then(response => {
+            console.log(username, password)
+            Alert.alert('Login successful', response.message);
+            navigation.navigate('Authenticate', { usernameParam: username, passParam : password});
+            
+        })
+        .catch(error => {
+            if(error.response && error.response.status === 400){
+                Alert.alert('Wrong username or password!', response.error);
+            }
+            else{
+                console.warn(error);
+            }
+        })
     }
 
     // Renderowanie komponentu

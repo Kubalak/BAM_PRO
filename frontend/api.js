@@ -10,7 +10,11 @@ export const authenticate2FA = async (formData2FA) => {
   try{
     const addr = `${process.env.EXPO_PUBLIC_API_URL}/main/authenticate/`
     console.info(addr)
-    const response = await axios.post(addr,formData2FA);
+    const response = await axios.post(addr,formData2FA, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   }catch(error)
   {
@@ -28,29 +32,17 @@ export const registerUser = async (formDataRegister) => {
   try {
     const addr = `${process.env.EXPO_PUBLIC_API_URL}/main/register/`
     console.info(addr)
-    const response = await axios.post(addr,formDataRegister);
+    const response = await axios.post(addr,formDataRegister, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response.data.error);
   }
 };
 
-/**
- * Funkcja do logowania użytkownika
- * @param {FormData} formDataLogin - Dane logowania użytkownika
- * @returns {Promise<object>} - Obiekt odpowiedzi po zalogowaniu
- * @throws {Error} - Błąd podczas logowania użytkownika
- */
-export const loginUser = async (formDataLogin) => {
-  try {
-    const addr = `${process.env.EXPO_PUBLIC_API_URL}/main/login/`
-    console.info(addr)
-    const response = await axios.post(addr,formDataLogin);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response.data.error);
-  }
-};
 
 /**
  * Obiekt do wykonywania żądań HTTP do API
