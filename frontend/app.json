@@ -4,7 +4,7 @@
     "slug": "frontend",
     "version": "0.9.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/locked-padlock.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -20,8 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "usesCleartextTraffic": true
+        "backgroundColor": "#ffffff"
       },
       "package": "com.kubaj.frontend"
     },

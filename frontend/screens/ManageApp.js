@@ -24,8 +24,8 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, FlatList, StyleSheet, Pressable, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, FlatList, StyleSheet, Pressable, Alert, Button } from 'react-native';
+import { AntDesign } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import NewService from '../components/NewService';
@@ -41,6 +41,7 @@ export default function ManageApp({ navigation }) {
   // Stany komponentu
   const [services, setServices] = useState(null);
   const [local, setLocal] = useState(null);
+  const [loading, setIsLoading] = useState(false);
 
   // Funkcja do wczytywania danych
   const loadData = () => {
@@ -54,6 +55,7 @@ export default function ManageApp({ navigation }) {
       })
     } else {
       if (!local) {
+        setIsLoading(true);
         api.get('/main/services/list/')
           .then(response => {
             return response.data
@@ -64,7 +66,9 @@ export default function ManageApp({ navigation }) {
           .catch(error => {
             console.error(error)
           })
+          setIsLoading(false)
       } else {
+        setIsLoading(true)
         SecureStore.getItemAsync('credits')
           .then(value => {
             setServices(value === null ? [] : JSON.parse(value))
@@ -72,6 +76,7 @@ export default function ManageApp({ navigation }) {
           .catch(error => {
             console.error(error)
           })
+          setIsLoading(false)
       }
     }
   }
@@ -113,7 +118,6 @@ export default function ManageApp({ navigation }) {
   // Funkcja obsługująca naciśnięcie na element
   const handlePress = (item) => {
     navigation.navigate('EditService', { serviceDetails: item, local: local });
-    console.log('Pressed item:', item);
   };
 
   // Renderowanie komponentu
@@ -122,8 +126,12 @@ export default function ManageApp({ navigation }) {
       <StatusBar>This is a status bar</StatusBar>
       <Text style={style.title}>Your saved data</Text>
       <View style={style.list}>
-        <FlatList
+        {
+          services && services.length !== 0 ? 
+          <FlatList
           data={services}
+          onRefresh={() => loadData()}
+          refreshing={loading}
           renderItem={({ item }) => (
             <Pressable
               delayLongPress={1000}
@@ -131,9 +139,16 @@ export default function ManageApp({ navigation }) {
               onLongPress={() => handleLongPress(item)}>
               <Service details={item} key={item.pk} />
             </Pressable>)} />
+            :
+            <Pressable onPress={() => loadData()}>
+              <View style={style.reload}>
+                <AntDesign name="reload1" size={24} color="black" />
+              </View>
+            </Pressable>
+        }
+        
       </View>
       <NewService />
-      <Pressable style={style.reload} onPress={() => loadData()}><Ionicons name="reload" size={24} color="black" /><Text> Refresh</Text></Pressable>
     </View>
   );
 };
@@ -155,11 +170,11 @@ const style = StyleSheet.create({
     marginBottom: 10,
   },
   reload: {
-    backgroundColor: '#BCDEFA',
-    flexDirection: 'row',
+    width: 30,
+    alignSelf: 'center',
     padding: 2,
     paddingRight: 4,
-    borderRadius: 5,
     marginTop: 5,
+    marginBottom: 15,
   }
 })

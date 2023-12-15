@@ -67,6 +67,7 @@ function MyStack() {
       })
       .catch(error => {
         console.error(error)
+		console.error(error.request)
       })
   }, [])
 

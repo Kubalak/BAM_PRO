@@ -44,7 +44,6 @@ export default function Authenticate({route, navigation}) {
             }
         })
         .then(response => {
-                Alert.alert('Authentication successful', response.message);
                 navigation.reset({
                     routes: [{ name: 'PassManager' }]
                 });

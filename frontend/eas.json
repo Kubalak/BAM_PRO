@@ -14,7 +14,7 @@
       },
       "channel": "preview",
       "env":{
-         "EXPO_PUBLIC_API_URL": "http://example.com"
+         "EXPO_PUBLIC_API_URL": "https://kubaj.mooo.com"
        }
     },
     "production": {

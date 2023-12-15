@@ -25,7 +25,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, Alert, StatusBar } from "
 import * as SecureStore from 'expo-secure-store';
 import { Picker } from '@react-native-picker/picker';
 import DisplayIcon from "../components/DisplayIcon";
-
+import { icons } from "../components/DisplayIcon";
 /**
  * Komponent EditService
  * @param {object} navigation - Obiekt nawigacji.
@@ -50,7 +50,7 @@ export default function EditService({ navigation, route }) {
             form.append('password', password)
             form.append('icon', icon)
 
-            api.post('/main/service/edit/', form, {
+            api.post(`/main/service/edit/${route.params.serviceDetails.pk}/`, form, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
@@ -120,10 +120,9 @@ export default function EditService({ navigation, route }) {
                         onValueChange={(value) => setIcon(value)}
                         placeholder="Select icon"
                     >
-                        <Picker.Item label="Default" value='{"type": "fa", "name": "globe"}' />
-                        <Picker.Item label="Facebook" value='{"type": "ad", "name":"facebook-square"}' />
-                        <Picker.Item label="X" value='{"type": "ad", "name":"twitter"}' />
-                        <Picker.Item label="LinkedIn" value='{"type": "fa", "name":"linkedin"}' />
+                    {
+                        icons.map((item, index) => <Picker.Item label={item.label} value={item.value} key={index}/>)
+                    }
                     </Picker>
                     <View style={style.icon}>
                         <DisplayIcon iconString={icon} color="blue" />

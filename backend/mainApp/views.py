@@ -1,12 +1,14 @@
 from django.http import JsonResponse, HttpResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_GET
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from .models import UserProfile, CreditStorage
 from .serializers import CreditSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django_otp.plugins.otp_totp.models import TOTPDevice
+
 from base64 import b32encode
 
 def index(request):
@@ -53,7 +55,6 @@ def register_view(request):
             profile, created = UserProfile.objects.get_or_create(user=user)
             profile.totp_device = totp_device
             profile.save()
-            print(secret_key)
             return JsonResponse({'message': 'User registered successfully.', 'secret':secret_key, 'status':200})
         
         except Exception as e:
@@ -80,13 +81,13 @@ def login_view(request):
 
             user = authenticate(request, username=username, password=password)
 
-            if user is not None:
-                return JsonResponse({'message':'All good in sucessfully', 'status':200})
-            else:
-                return JsonResponse({'error':'Invalid username or password', 'status':400})
+            if user is None:
+                return JsonResponse({'error':'Invalid username or password'}, status=400)
+            
+            return JsonResponse({'message':'All good in sucessfully'})
         except Exception as e:
-            return JsonResponse({'error':str(e),  'status':500})
-    return JsonResponse({'error': 'Invalid request method', 'status':405})
+            return JsonResponse({'error':str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request method'},status=405)
 
 @csrf_exempt
 def authenticate_view(request):
@@ -104,11 +105,8 @@ def authenticate_view(request):
             username = request.POST.get('username')
             password = request.POST.get('password')
             totp_code = request.POST.get('password2FA')
-            print(totp_code)
             user = authenticate(request, username=username, password=password)
-            print("User", user)
             totp_device = TOTPDevice.objects.get(user=user)
-            print("Totp_device", totp_device)
             if totp_device.verify_token(totp_code):
                 login(request, user)
                 return JsonResponse({'message': 'User logged in successfully', 'status' : 200}) 
@@ -160,6 +158,42 @@ def add_service(request:HttpRequest):
     except Exception as e:
         print(e)
         return JsonResponse({"error": "Something went wrong when processing request"}, status=500)
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def edit_service(request:HttpRequest, id:int):
+    """
+    Widok edycji usługi.
+    
+    Zapisuje nowe dane do istniejącej usługi.
+    Wymaga uwierzytelnienia.
+    
+    :param request: Zapytanie HttpRequest
+    :param id: Identyfikator usługi do modyfikacji
+    :return: Informacja o powodzeniu operacji.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Please log in first"}, status=401)
+    try:
+        name = request.POST.get("name")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        icon = request.POST.get("icon")
+        
+        credits = CreditStorage.objects.get(Q(pk=id) & Q(user=request.user))
+        
+        credits.name = name
+        credits.username = username
+        credits.password = password
+        credits.icon = icon
+        credits.save()
+        return JsonResponse({"message": "Credentials changed successfully!"})
+    except ObjectDoesNotExist:
+        return JsonResponse({"error": "Requested credentials not found!"}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({"error": "Something went wrong!"}, status=500)
+        
     
 @require_http_methods(["POST"])
 @csrf_exempt

@@ -27,6 +27,7 @@ import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import DisplayIcon from "../components/DisplayIcon";
+import {icons} from "../components/DisplayIcon";
 
 /**
  * Komponent AddService
@@ -133,10 +134,9 @@ export default function AddService({ navigation }) {
                         onValueChange={(value) => setIcon(value)}
                         placeholder="Select icon"
                     >
-                        <Picker.Item label="Default" value='{"type": "fa", "name": "globe"}' />
-                        <Picker.Item label="Facebook" value='{"type": "ad", "name":"facebook-square"}' />
-                        <Picker.Item label="X" value='{"type": "ad", "name":"twitter"}' />
-                        <Picker.Item label="LinkedIn" value='{"type": "fa", "name":"linkedin"}' />
+                    {
+                        icons.map((item, index) => <Picker.Item label={item.label} value={item.value} key={index}/>)
+                    }
                     </Picker>
                     <View style={style.icon}>
                         <DisplayIcon iconString={icon} color="blue" />

@@ -44,7 +44,6 @@ export default function PassManager({navigation}){
             });
             if(success)
                 console.info(success)
-                console.info("Success");
         }
         catch(error){
             console.error(error);

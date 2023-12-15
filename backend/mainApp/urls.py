@@ -20,6 +20,9 @@ urlpatterns = [
 
     path("service/add/", view=views.add_service, name="add_service"),
     # Widok dodawania nowej usługi
+    
+    path("service/edit/<int:id>/", view=views.edit_service, name="edit_service"),
+    # Widok edycji usługi
 
     path("services/list/", view=views.list_services, name="list"),
     # Widok listowania usług użytkownika
