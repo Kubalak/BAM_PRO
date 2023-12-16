@@ -40,11 +40,11 @@ def register_view(request):
 
             # check password
             if password1 != password2:
-                return JsonResponse({'error': 'Passwords do not match', 'status': 400})
+                return JsonResponse({'error': 'Passwords do not match!'},status=400)
 
             # check username
             if User.objects.filter(username=username).exists():
-                return JsonResponse({'error': 'Username is already taken', 'status': 401})
+                return JsonResponse({'error': 'Username is already taken!'}, status=401)
 
             # Create the user
             user = User.objects.create_user(username=username, email=email, password=password1)
@@ -55,13 +55,13 @@ def register_view(request):
             profile, created = UserProfile.objects.get_or_create(user=user)
             profile.totp_device = totp_device
             profile.save()
-            return JsonResponse({'message': 'User registered successfully.', 'secret':secret_key, 'status':200})
+            return JsonResponse({'message': 'User registered successfully.', 'secret':secret_key})
         
         except Exception as e:
-            return JsonResponse({'error': str(e),  'status':500})
+            return JsonResponse({'error': str(e)}, status=500)
 
     else:
-        return JsonResponse({'error': 'Invalid request method', 'status':405})
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
     
 @csrf_exempt
 def login_view(request):
@@ -109,12 +109,13 @@ def authenticate_view(request):
             totp_device = TOTPDevice.objects.get(user=user)
             if totp_device.verify_token(totp_code):
                 login(request, user)
-                return JsonResponse({'message': 'User logged in successfully', 'status' : 200}) 
+                return JsonResponse({'message': 'User logged in successfully'}) 
             else:
-                return JsonResponse({'error': 'Invalid 2FA code', 'status':400})
+                return JsonResponse({'error': 'Invalid 2FA code'}, status=400)
         except Exception as e:
-            return JsonResponse({'error':str(e), 'status':500}, )
-    return JsonResponse({'error': 'Invalid request method', 'status':405})
+            print(e)
+            return JsonResponse({'error':"Something went wrong!"}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @require_GET

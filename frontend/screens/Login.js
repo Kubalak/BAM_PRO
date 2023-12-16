@@ -5,7 +5,6 @@
  * 
  * @requires React
  * @requires useState
- * @requires useEffect
  * @requires loginUser
  * @requires TextInput
  * @requires Button
@@ -15,7 +14,7 @@
  * @requires Text
  */
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import api from '../api';
 import { TextInput, Button, Alert, StyleSheet, View, Text } from 'react-native';
 
@@ -51,9 +50,11 @@ export default function Login({ navigation }) {
         })
         .catch(error => {
             if(error.response && error.response.status === 400)
-                Alert.alert('Wrong username or password!', error.response.error);
-            else
+                Alert.alert('Login failed', error.response.data.error);
+            else {
+                Alert.alert('Login failed', "An unexpected error occured");
                 console.warn(error);
+            }
         })
     }
 

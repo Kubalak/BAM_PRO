@@ -27,7 +27,6 @@ const style = StyleSheet.create({
         width: '100%',
         flexDirection: 'column',
         backgroundColor: '#BCDEFA',
-        paddingBottom: 5,
         marginBottom: 10,
         shadowColor: 'black',
         shadowOpacity: 2,
@@ -35,7 +34,8 @@ const style = StyleSheet.create({
         elevation: 5,
         paddingLeft: 2,
         paddingRight: 2,
-        paddingTop: 5,
+        paddingTop: 4,
+        paddingBottom: 6
 
     },
     content: {

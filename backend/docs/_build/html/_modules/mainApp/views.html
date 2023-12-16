@@ -10,12 +10,12 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=4cec2c57"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/translations.js?v=a186e9ce"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Indeks" href="../../genindex.html" />
     <link rel="search" title="Szukaj" href="../../search.html" /> 
@@ -73,17 +73,17 @@
 <span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span><span class="p">,</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">HttpRequest</span>
 <span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
 <span class="kn">from</span> <span class="nn">django.views.decorators.http</span> <span class="kn">import</span> <span class="n">require_http_methods</span><span class="p">,</span> <span class="n">require_GET</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ObjectDoesNotExist</span>
 <span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">UserProfile</span><span class="p">,</span> <span class="n">CreditStorage</span>
 <span class="kn">from</span> <span class="nn">.serializers</span> <span class="kn">import</span> <span class="n">CreditSerializer</span>
 <span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
 <span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">authenticate</span><span class="p">,</span> <span class="n">logout</span>
 <span class="kn">from</span> <span class="nn">django_otp.plugins.otp_totp.models</span> <span class="kn">import</span> <span class="n">TOTPDevice</span>
+
 <span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b32encode</span>
 
-<div class="viewcode-block" id="index">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.index">[dokumentacja]</a>
-<span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.index">[dokumentacja]</a><span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widok wyświetlający prosty komunikat &quot;Hello there from index!&quot;.</span>
 
@@ -92,10 +92,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s2">&quot;Hello there from index!&quot;</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="register_view">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.register_view">[dokumentacja]</a>
-<span class="nd">@csrf_exempt</span>
+<div class="viewcode-block" id="register_view"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.register_view">[dokumentacja]</a><span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">register_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widok rejestracji nowego użytkownika.</span>
@@ -130,7 +127,6 @@
             <span class="n">profile</span><span class="p">,</span> <span class="n">created</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
             <span class="n">profile</span><span class="o">.</span><span class="n">totp_device</span> <span class="o">=</span> <span class="n">totp_device</span>
             <span class="n">profile</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">secret_key</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;User registered successfully.&#39;</span><span class="p">,</span> <span class="s1">&#39;secret&#39;</span><span class="p">:</span><span class="n">secret_key</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">})</span>
         
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -138,11 +134,8 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">405</span><span class="p">})</span></div>
-
     
-<div class="viewcode-block" id="login_view">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.login_view">[dokumentacja]</a>
-<span class="nd">@csrf_exempt</span>
+<div class="viewcode-block" id="login_view"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.login_view">[dokumentacja]</a><span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">login_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widok logowania użytkownika.</span>
@@ -160,18 +153,15 @@
 
             <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span><span class="s1">&#39;All good in sucessfully&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">})</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="s1">&#39;Invalid username or password&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">400</span><span class="p">})</span>
+            <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="s1">&#39;Invalid username or password&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+            
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span><span class="s1">&#39;All good in sucessfully&#39;</span><span class="p">})</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>  <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">405</span><span class="p">})</span></div>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">},</span><span class="n">status</span><span class="o">=</span><span class="mi">405</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="authenticate_view">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.authenticate_view">[dokumentacja]</a>
-<span class="nd">@csrf_exempt</span>
+<div class="viewcode-block" id="authenticate_view"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.authenticate_view">[dokumentacja]</a><span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">authenticate_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widok uwierzytelniania użytkownika z dwuetapową weryfikacją.</span>
@@ -187,11 +177,8 @@
             <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">)</span>
             <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">)</span>
             <span class="n">totp_code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;password2FA&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">totp_code</span><span class="p">)</span>
             <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
             <span class="n">totp_device</span> <span class="o">=</span> <span class="n">TOTPDevice</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Totp_device&quot;</span><span class="p">,</span> <span class="n">totp_device</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">totp_device</span><span class="o">.</span><span class="n">verify_token</span><span class="p">(</span><span class="n">totp_code</span><span class="p">):</span>
                 <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;User logged in successfully&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">})</span> 
@@ -202,10 +189,7 @@
     <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid request method&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">:</span><span class="mi">405</span><span class="p">})</span></div>
 
 
-
-<div class="viewcode-block" id="status">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.status">[dokumentacja]</a>
-<span class="nd">@require_GET</span>
+<div class="viewcode-block" id="status"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.status">[dokumentacja]</a><span class="nd">@require_GET</span>
 <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widok zwracający status uwierzytelnienia użytkownika.</span>
@@ -215,10 +199,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;authenticated&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">})</span></div>
 
-
-<div class="viewcode-block" id="add_service">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.add_service">[dokumentacja]</a>
-<span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<div class="viewcode-block" id="add_service"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.add_service">[dokumentacja]</a><span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
 <span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">add_service</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -250,10 +231,43 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Something went wrong when processing request&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="edit_service"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.edit_service">[dokumentacja]</a><span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">edit_service</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Widok edycji usługi.</span>
+<span class="sd">    </span>
+<span class="sd">    Zapisuje nowe dane do istniejącej usługi.</span>
+<span class="sd">    Wymaga uwierzytelnienia.</span>
+<span class="sd">    </span>
+<span class="sd">    :param request: Zapytanie HttpRequest</span>
+<span class="sd">    :param id: Identyfikator usługi do modyfikacji</span>
+<span class="sd">    :return: Informacja o powodzeniu operacji.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Please log in first&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;icon&quot;</span><span class="p">)</span>
+        
+        <span class="n">credits</span> <span class="o">=</span> <span class="n">CreditStorage</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">Q</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">))</span>
+        
+        <span class="n">credits</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">credits</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="n">credits</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="n">credits</span><span class="o">.</span><span class="n">icon</span> <span class="o">=</span> <span class="n">icon</span>
+        <span class="n">credits</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Credentials changed successfully!&quot;</span><span class="p">})</span>
+    <span class="k">except</span> <span class="n">ObjectDoesNotExist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Requested credentials not found!&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Something went wrong!&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+        
     
-<div class="viewcode-block" id="delete_service">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.delete_service">[dokumentacja]</a>
-<span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<div class="viewcode-block" id="delete_service"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.delete_service">[dokumentacja]</a><span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
 <span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">delete_service</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -275,12 +289,9 @@
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Something went wrong when processing request&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>    </div>
-
        
 
-<div class="viewcode-block" id="list_services">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.list_services">[dokumentacja]</a>
-<span class="nd">@require_GET</span>
+<div class="viewcode-block" id="list_services"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.list_services">[dokumentacja]</a><span class="nd">@require_GET</span>
 <span class="k">def</span> <span class="nf">list_services</span><span class="p">(</span><span class="n">request</span><span class="p">:</span><span class="n">HttpRequest</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Widok listowania usług użytkownika.</span>
@@ -296,10 +307,7 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">CreditStorage</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;services&quot;</span><span class="p">:</span> <span class="n">CreditSerializer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">})</span></div>
 
-
-<div class="viewcode-block" id="user_logout">
-<a class="viewcode-back" href="../../mainApp.html#mainApp.views.user_logout">[dokumentacja]</a>
-<span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<div class="viewcode-block" id="user_logout"><a class="viewcode-back" href="../../mainApp.html#mainApp.views.user_logout">[dokumentacja]</a><span class="nd">@require_http_methods</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
 <span class="nd">@csrf_exempt</span>
 <span class="k">def</span> <span class="nf">user_logout</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -312,7 +320,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Logout successfull&quot;</span><span class="p">})</span></div>
-
         
         
 </pre></div>
@@ -324,7 +331,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Prawa zastrzeżone 2023, Patryk Jaworski, Jakub Jach.</p>
+    <p>&#169; Copyright 2023, Patryk Jaworski, Jakub Jach.</p>
   </div>
 
   Zbudowano w <a href="https://www.sphinx-doc.org/">Sphinx</a> używając

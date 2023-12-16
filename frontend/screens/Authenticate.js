@@ -49,8 +49,9 @@ export default function Authenticate({route, navigation}) {
                 });
             })
         .catch(error => {
-            if(error.response && error.response.status === 400)
-                Alert.alert('Wrong 2FA code!', response.error);
+            if(error.response && error.response.status === 400){
+                Alert.alert('Wrong 2FA code!', error.response.data ? error.response.data.error : '');
+            }
             else {
                 Alert.alert('Login Failed!', 'Unexpected response from the server');
                 console.error(error);

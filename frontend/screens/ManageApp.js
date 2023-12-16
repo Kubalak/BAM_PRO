@@ -162,6 +162,8 @@ const style = StyleSheet.create({
   },
   list: {
     width: '100%',
+    flex: 1,
+    marginBottom: 5,
   },
   title: {
     fontSize: 16,
